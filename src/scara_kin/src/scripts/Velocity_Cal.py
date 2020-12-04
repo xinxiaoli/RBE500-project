@@ -2,7 +2,7 @@
 import rospy
 import numpy as np
 from std_msgs.msg import Float64
-from scara_kin.srv import JointVelocityCal,JointVelocityCalResponse
+from scara_kin.srv import effjointvelocity,effjointvelocityResponse
 
 
 def Jacobian_cal(q):
@@ -53,7 +53,7 @@ def Jacobian_cal(q):
     return J
 
 #calculate joint velocities
-def Joint_velocity_cal(obj):
+def eff_joint_velocity(obj):
     q1 = obj.a
     q2 = obj.b
     q3 = obj.c
@@ -69,15 +69,15 @@ def Joint_velocity_cal(obj):
     q_dot = np.matmul(Jinv,ee_vel)
     obj.q_dot = q_dot
 
-    return JointVelovityCalResponse(obj)
+    return effjointvelocityResponse(obj)
 
 def Joint_velocity_server():
-     s = rospy.Service('Joint_velocities_cal',JointVelocityCal,Joint_velocity_cal)
+     s = rospy.Service('Joint_velocities_cal',effjointvelocity,eff_joint_velocity)
 
 
 if __name__ == "__main__":
         rospy.init_node('velocity_calculation')
-        Joint_velocity_server()
+        eff_joint_velocity_server()
 
         rospy.spin()    
     
