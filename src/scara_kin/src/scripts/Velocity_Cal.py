@@ -79,6 +79,4 @@ if __name__ == "__main__":
         rospy.init_node('velocity_calculation')
         eff_joint_velocity_server()
 
-        rospy.spin()    
-    
-
+        rospy.spin()
