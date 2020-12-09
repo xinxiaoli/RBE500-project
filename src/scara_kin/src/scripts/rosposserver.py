@@ -10,9 +10,11 @@ from scara_kin.srv import Refpos, RefposResponse
 
 def handle(refpos):
 
-    pos = refpos.ref
+    pos1 = refpos.ref1
+    pos2 = refpos.ref2
+    pos3 = refpos.ref3
 
-    return RefposResponse(pos)
+    return RefposResponse([pos1, pos2, pos3])
 
 def rospos_server():
 

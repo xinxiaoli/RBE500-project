@@ -8,7 +8,7 @@ from gazebo_msgs.srv import GetWorldProperties
 from gazebo_msgs.srv import ApplyJointEffort
 from gazebo_msgs.srv import JointRequest
 from gazebo_msgs.srv import GetPhysicsProperties
-from scara_kin.srv import Refpos
+from scara_kin.srv import Refpos, RefposResponse
 #from scara_kin.msg import Output
 #import time
 #import math
@@ -22,7 +22,7 @@ class pid_class():
         self.clear_effort = rospy.ServiceProxy('/gazebo/clear_joint_forces', JointRequest)
         self.p_gain = 0
         self.d_gain = 0
-        self.ref_pos = 0.25
+        self.ref_pos = 0
         self.prev_err = 0
         self.prev_time = 10
 
@@ -30,8 +30,12 @@ class pid_class():
         # with open('plotdata.csv') as csvfile:
         #     a = csv.reader(plotdata, delimiter=' ', quotechar='|')
     def set_ref_pos(self):
-        refpos_proxy = rospy.ServiceProxy('/refposserver', Refpos)
-        # self.ref_pos = refpos_proxy(0.25)
+        refpos_proxy = rospy.ServiceProxy('refposserver', Refpos)
+        self.ref_pos1 = refpos_proxy[0]
+        self.ref_pos2 = refpos_proxy[1]
+        self.ref_pos3 = refpos_proxy[2]
+        print(refpos_proxy)
+
     def get_time(self):
         temp = self.get_world_property()
         return temp.sim_time
