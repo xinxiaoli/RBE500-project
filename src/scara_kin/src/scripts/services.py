@@ -6,7 +6,7 @@ from scara_kin.srv import *
 from gazebo_msgs.srv import *
 from gazebo_msgs.msg import *
 from std_msgs.msg import Float64
-import pid
+import pid3
 
 
 
@@ -55,7 +55,7 @@ if __name__ == "__main__":
     Joint_velocities = Joint_velocity_calculation_client(q1,q2,q3,vel[0],vel[1],vel[2],vel[3],vel[4],vel[5])
     rev_qdot = np.array(Joint_velocities.q_dot).reshape((3,1))
     #input controller
-    pid = pid.pid_class()
+    pid = pid3.pid_class()
     #joint1 and 2 gain are 30 and 8, joint 3 gain are 375 and 25
     pid.set_gains(30, 8, 375, 25)
 
