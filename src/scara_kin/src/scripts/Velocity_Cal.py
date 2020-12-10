@@ -16,7 +16,7 @@ def Jacobian_cal(a,b,c):
     q2 = b
     q3 = c
     alpha = [0.0,np.pi,0.0]
-    theta = [q1,q2,0.0]
+    theta = [(q1+np.pi)/2,q2,0.0]
     # calcualte transfer matrix
     T0_1 = np.array([[np.cos(theta[0]), -np.sin(theta[0])*np.cos(alpha[0]),  np.sin(theta[0])*np.sin(alpha[0]), l2*np.cos(theta[0])],
                       [np.sin(theta[0]),  np.cos(theta[0])*np.cos(alpha[0]), -np.cos(theta[0])*np.sin(alpha[0]), l2*np.sin(theta[0])],

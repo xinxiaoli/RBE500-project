@@ -40,7 +40,7 @@ class pid_class():
     
     def set_ref_pos(self, refpos1, refpos2, refpos3):
         refpos_proxy = rospy.ServiceProxy('refposserver', Refpos)
-        req = refpos_proxy(1,2,0.25)
+        req = refpos_proxy(refpos1,refpos2,refpos3)
         self.ref_pos1 = req.angles.x
         self.ref_pos2 = req.angles.y
         self.ref_pos3 = req.angles.z

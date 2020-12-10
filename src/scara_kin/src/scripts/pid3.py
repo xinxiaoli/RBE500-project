@@ -32,10 +32,13 @@ class pid_class():
         self.ref_pos1 = 0
         self.ref_pos2 = 0
         self.ref_pos3 = 0
+        self.prev_err = 0
         self.prev_err1 = 0
         self.prev_err2 = 0
         self.prev_err3 = 0
         self.prev_time = 10
+        self.ref_vel1 = 0.2
+        self.ref_vel2 = 0.2
     def set_ref_pos(self, refpos1, refpos2, refpos3):
         self.ref_pos1 = refpos1
         self.ref_pos2 = refpos2
@@ -49,12 +52,45 @@ class pid_class():
         request3 = self.get_joint_property('joint3')
         req = [request1.position[0], request2.position[0], request3.position[0]]
         return req
+    def get_vel(self):
+        getrequest1 = self.get_joint_property('joint1')
+        reqpos1 = getrequest1.position[0]
+        getrequest3 = self.get_joint_property('joint2')
+        reqpos3 = getrequest3.position[0]
+        tim1 = self.get_time()
+        getrequest2 = self.get_joint_property('joint1')
+        reqpos2 = getrequest2.position[0]
+        getrequest4 = self.get_joint_property('joint2')
+        reqpos4 = getrequest4.position[0]
+        tim2 = self.get_time()
+        diffpos1 = reqpos2 - reqpos1
+        diffpos2 = reqpos4 - reqpos3
+        difftime = tim2 - tim1
+        return [diffpos1/difftime, diffpos2/difftime]
+
     def set_gains(self, pg1, dg1, pg2, dg2): # first two gains are for joint1&2, last two for joint3
         self.p_gain1 = pg1
         self.d_gain1 = dg1
         self.p_gain2 = pg2
         self.d_gain2 = dg2
-    def control(self):
+    def velcontrol(self):
+        curr_vel = self.get_vel()
+        self.curr_time = self.get_time()
+        curr_err1 = self.ref_vel1 - curr_vel[0]
+        curr_err2 = self.ref_vel2 - curr_vel[1]
+        p_term1 = 3*curr_err1
+        d_term1 = 0.2*(curr_err1 - self.prev_err1)/(self.curr_time - self.prev_time)
+        p_term2 = 3*curr_err2
+        d_term2 = 0.2*(curr_err2 - self.prev_err2)/(self.curr_time - self.prev_time)
+        control_vel1 = p_term1 + d_term1
+        control_vel2 = p_term2 + d_term2
+        self.apply_joint_effort('joint1', control_vel1, rospy.Time(0), rospy.Time(0,25000000))
+        self.apply_joint_effort('joint2', control_vel2, rospy.Time(0), rospy.Time(0,25000000))
+        self.prev_err1 = curr_err1
+        self.prev_err2 = curr_err2
+        self.prev_time = self.curr_time
+
+    def poscontrol(self):
         curr_pos = self.get_pos()
         self.curr_time = self.get_time()
         curr_err1 = self.ref_pos1 - curr_pos[0]
@@ -84,7 +120,8 @@ def main():
     # For joint1&2 gains are 10, 1 and joint3 gains are 375, 25
     pid.set_ref_pos(4, 4, 0.25)
     while(1):
-        pid.control()
+        #pid.poscontrol()
+        pid.velcontrol()
 
 if __name__ == '__main__':
     try:
