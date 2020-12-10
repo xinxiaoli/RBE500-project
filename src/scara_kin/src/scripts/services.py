@@ -153,9 +153,15 @@ if __name__ == "__main__":
         #output velocity ([vx,vy,vz,wx,wy,wz])
         v_actual = task_space_velcal_client(q1[0],q2[0],q3[0],q_dot[0],q_dot[1],q_dot[2])
         v_ref = task_space_velcal_client(q1[0],q2[0],q3[0],ref_q_dot[0],ref_q_dot[1],ref_q_dot[2])
-        print("The actual velocity is ",v_actual.veloutput)
-        print("The reference velocity is ",v_ref.veloutput)
-        print("The time is ",time)
+        #actual velocity list
+        actual_velocity.append(v_actual)
+        #reference velocity list
+        reference_velocity.append(v_ref)
+        #time list
+        Time.append(time)
+        
+        
+
 
         
 
