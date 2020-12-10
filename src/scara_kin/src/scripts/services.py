@@ -133,6 +133,9 @@ if __name__ == "__main__":
     #setting up controller
     q_previous = Get_joint_position()
     q_previous = np.array(q_previous).reshape((3,1))
+    actual_velocity = []
+    reference_velocity = []
+    Time_file = []
     while error_start[0] > 0.000001 or error_start[1] > 0.0000001 or error_start[2] > 0.000001:
         q_position = Get_joint_position()
         q_position = np.array(q_position).reshape((3,1))
@@ -160,8 +163,6 @@ if __name__ == "__main__":
         #time list
         Time_file.append(time)
 
-        
-        
     with open('Actual_velocity', 'w') as f:
      for x in actual_velocity:
             f.write("%s\n" % x)
