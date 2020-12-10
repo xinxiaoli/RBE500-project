@@ -148,7 +148,7 @@ if __name__ == "__main__":
         q_dot = np.array((q_position - q_previous))/(time-start_time)
         #PD controller
         e = velocity_controller(ref_q_dot,q_dot,error_start,start_time,s_time)
-        start_time = time - start_time1
+        #start_time = time - start_time1
         error_start = e
         q_previous = q_position 
         #output velocity ([vx,vy,vz,wx,wy,wz])
