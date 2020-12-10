@@ -90,7 +90,7 @@ def velocity_controller(ref_q_dot,q_dot,error_start,start_times,s_time):
     time = rospy.get_time()
     error = ref_q_dot - q_dot
     e_dot = (error - error_start)/(time-start_time)
-    effort = np.dot(kp,e_dot)+np.dot(kd,e_dot)
+    effort = np.dot(kp,error)+np.dot(kd,e_dot)
     clear_joint_effort('joint1')
     clear_joint_effort('joint2')
     clear_joint_effort('joint3')
@@ -139,6 +139,8 @@ if __name__ == "__main__":
     error_start = rev_qdot - q_dot
     #setting up controller
     time_bar = []
+    q_previous = Get_joint_position()
+    q_previous = np.array(q_previous).reshape((3,1))
     while error_start[0] > 0.000001 or error_start[1] > 0.0000001 or error_start[2] > 0.000001:
         q_position = Get_joint_position()
         q_position = np.array(q_position).reshape((3,1))
@@ -149,13 +151,25 @@ if __name__ == "__main__":
         Joint_velocities = Joint_velocity_calculation_client(q1,q2,q3,vel[0],vel[1],vel[2],vel[3],vel[4],vel[5])
         ref_q_dot = np.array(Joint_velocities.q_dot).reshape((3,1))
         q = q_position - q_start_position
-        q_dot = np.array((q_position - q_start_position))/(time-start_time)
-        #controller
+        q_dot = np.array((q_position - q_previous))/(time-start_time)
+        #PD controller
         e = velocity_controller(ref_q_dot,q_dot,error_start,start_time,s_time)
         start_time = time
         error_start = e
+        q_previous = q_position 
         
 
 
 
 
+
+        
+
+
+
+
+    
+ 
+    #calculate joint velovity
+    #user input velocity of end effector
+    
