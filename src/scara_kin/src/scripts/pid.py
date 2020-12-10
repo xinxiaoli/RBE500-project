@@ -34,6 +34,8 @@ class pid_class():
         self.prev_err2 = 0
         self.prev_err3 = 0
         self.prev_time = 10
+        self.ref_vel1 = 0.5
+        self.ref_vel2 = 0.5
         self.np_array = np.array([])
         # with open('plotdata.csv') as csvfile:
         #     a = csv.reader(plotdata, delimiter=' ', quotechar='|')
@@ -59,7 +61,38 @@ class pid_class():
         self.d_gain1 = dg1
         self.p_gain2 = pg2
         self.d_gain2 = dg2
-    def control(self):
+    def get_vel(self):
+        getrequest1 = self.get_joint_property('joint1')
+        reqpos1 = getrequest1.position[0]
+        getrequest3 = self.get_joint_property('joint2')
+        reqpos3 = getrequest3.position[0]
+        tim1 = self.get_time()
+        getrequest2 = self.get_joint_property('joint1')
+        reqpos2 = getrequest2.position[0]
+        getrequest4 = self.get_joint_property('joint2')
+        reqpos4 = getrequest4.position[0]
+        tim2 = self.get_time()
+        diffpos1 = reqpos2 - reqpos1
+        diffpos2 = reqpos4 - reqpos3
+        difftime = tim2 - tim1
+        return [diffpos1/difftime, diffpos2/difftime]
+    def velcontrol(self):
+        curr_vel = self.get_vel()
+        self.curr_time = self.get_time()
+        curr_err1 = self.ref_vel1 - curr_vel[0]
+        curr_err2 = self.ref_vel2 - curr_vel[1]
+        p_term1 = 3*curr_err1
+        d_term1 = 0.2*(curr_err1 - self.prev_err1)/(self.curr_time - self.prev_time)
+        p_term2 = 3*curr_err2
+        d_term2 = 0.2*(curr_err2 - self.prev_err2)/(self.curr_time - self.prev_time)
+        control_vel1 = p_term1 + d_term1
+        control_vel2 = p_term2 + d_term2
+        self.apply_joint_effort('joint1', control_vel1, rospy.Time(0), rospy.Time(0,25000000))
+        self.apply_joint_effort('joint2', control_vel2, rospy.Time(0), rospy.Time(0,25000000))
+        self.prev_err1 = curr_err1
+        self.prev_err2 = curr_err2
+        self.prev_time = self.curr_time
+    def poscontrol(self):
         curr_pos = self.get_pos()
         self.curr_time = self.get_time()
         curr_err1 = self.ref_pos1 - curr_pos[0]
@@ -84,15 +117,6 @@ class pid_class():
         
         self.np_array = np.append(self.np_array, [self.curr_time, self.ref_pos1, curr_pos[0]], axis=0)
         self.np_array.tofile("plotdata.csv", sep=",")
-        # print(self.np_array)
-       # print("hi mom!")
-
-        # for row in a:
-        #     print('curr_pos, self.ref_pos, self.curr_time'.join(row))
-
-    #def plot(self, curr_pos, curr_time, refpos):
-     #   for row in a:
-      #      print('curr_pos, self.ref_pos, self.curr_time'.join(row))
 
 def main():
     rospy.init_node('pidnode', anonymous=True)
@@ -106,7 +130,8 @@ def main():
     # For joint1&2 gains are 10, 1 and joint3 gains are 375, 25
     pid.set_ref_pos(4, 4, 0.25)
     while not rospy.is_shutdown():
-        pid.control()
+        pid.poscontrol()
+        #pid.velcontrol()
 
 if __name__ == '__main__':
     try:
