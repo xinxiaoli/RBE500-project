@@ -159,8 +159,19 @@ if __name__ == "__main__":
         reference_velocity.append(v_ref)
         #time list
         Time.append(time)
+
         
         
+with open('Actual_velocity', 'w') as f:
+    for x in actual_velocity:
+        f.write("%s\n" % x)
+with open('Reference_velocity', 'w') as f:
+    for x in reference_velocity:
+        f.write("%s\n" % x)
+with open('Time', 'w') as f:
+    for x in Time:
+        f.write("%s\n" % x)
+
 
 
         
