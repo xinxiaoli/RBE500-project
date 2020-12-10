@@ -124,6 +124,7 @@ if __name__ == "__main__":
 
     ## controlling velocity
     start_time = rospy.get_time()
+    start_time1 = start_time
     duration = rospy.Time(2)
     s_time = rospy.Time(0)
     q_start_position = np.array(q).reshape((3,1))
@@ -147,7 +148,7 @@ if __name__ == "__main__":
         q_dot = np.array((q_position - q_previous))/(time-start_time)
         #PD controller
         e = velocity_controller(ref_q_dot,q_dot,error_start,start_time,s_time)
-        start_time = time
+        start_time = time - start_time1
         error_start = e
         q_previous = q_position 
         #output velocity ([vx,vy,vz,wx,wy,wz])
