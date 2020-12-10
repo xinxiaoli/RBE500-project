@@ -6,15 +6,23 @@
 import rospy
 from std_msgs.msg import Float32MultiArray
 from std_msgs.msg import Float32
+from geometry_msgs.msg import Pose, Point, Quaternion, Vector3
 from scara_kin.srv import Refpos, RefposResponse
 
 def handle(refpos):
+    angles = Vector3()
 
     pos1 = refpos.ref1
     pos2 = refpos.ref2
     pos3 = refpos.ref3
 
-    return RefposResponse([pos1, pos2, pos3])
+    angles.x = pos1
+    angles.y = pos2
+    angles.z = pos3
+
+    print(angles)
+
+    return RefposResponse(angles)
 
 def rospos_server():
 

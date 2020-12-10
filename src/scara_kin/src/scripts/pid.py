@@ -39,14 +39,11 @@ class pid_class():
         #     a = csv.reader(plotdata, delimiter=' ', quotechar='|')
     
     def set_ref_pos(self, refpos1, refpos2, refpos3):
-        self.ref_pos1 = refpos1
-        self.ref_pos2 = refpos2
-        self.ref_pos3 = refpos3
-        #refpos_proxy = rospy.ServiceProxy('refposserver', Refpos)
-        #self.ref_pos1 = refpos_proxy.refposit[0]
-        #self.ref_pos2 = refpos_proxy.refposit[1]
-        #self.ref_pos3 = refpos_proxy.refposit[2]
-        #print(refpos_proxy)
+        refpos_proxy = rospy.ServiceProxy('refposserver', Refpos)
+        req = refpos_proxy(1,2,0.25)
+        self.ref_pos1 = req.angles.x
+        self.ref_pos2 = req.angles.y
+        self.ref_pos3 = req.angles.z
 
     def get_time(self):
         temp = self.get_world_property()
