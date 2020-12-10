@@ -159,7 +159,7 @@ if __name__ == "__main__":
         #reference velocity list
         reference_velocity.append(v_ref)
         #time list
-        Time.append(time)
+        Time_file.append(time)
 
         
         
@@ -170,7 +170,7 @@ with open('Reference_velocity', 'w') as f:
     for x in reference_velocity:
         f.write("%s\n" % x)
 with open('Time', 'w') as f:
-    for x in Time:
+    for x in Time_file:
         f.write("%s\n" % x)
 
 
