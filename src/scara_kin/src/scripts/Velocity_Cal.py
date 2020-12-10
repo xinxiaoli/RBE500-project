@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+!/usr/bin/env python
 import rospy
 import numpy as np
 from std_msgs.msg import Float64
@@ -16,7 +16,8 @@ def Jacobian_cal(a,b,c):
     q2 = b
     q3 = c
     alpha = [0.0,np.pi,0.0]
-    theta = [(q1+np.pi)/2,q2,0.0]
+    theta1 = q1+np.pi/2
+    theta = [theta1,q2,0.0]
     # calcualte transfer matrix
     T0_1 = np.array([[np.cos(theta[0]), -np.sin(theta[0])*np.cos(alpha[0]),  np.sin(theta[0])*np.sin(alpha[0]), l2*np.cos(theta[0])],
                       [np.sin(theta[0]),  np.cos(theta[0])*np.cos(alpha[0]), -np.cos(theta[0])*np.sin(alpha[0]), l2*np.sin(theta[0])],
@@ -78,12 +79,15 @@ def Joint_velocity_cal(obj):
 
 #calculate end effector velocities
 def taskspaceVel_Cal(obj1):
-    J = Jacobian_cal([q1,q2,q3])
+    q1 = obj1.lx
+    q2 = obj1.ly
+    q3 = obj1.lz
+    J = Jacobian_cal(q1,q2,q3)
     ee_vel = np.array([obj1.ox,obj1.oy,obj1.oz]).reshape((3,1))
     q_dot = np.matmul(J,ee_vel)
-    obj1.veloutput = q_dot
 
-    return TaskSpaceVelCalResponse(obj1)
+
+    return TaskSpaceVelCalResponse(q_dot)
 
 
 def Joint_velocity_server():
@@ -100,5 +104,4 @@ if __name__ == "__main__":
         TaskSpace_velocity_server()
 
         rospy.spin()    
-    
 
