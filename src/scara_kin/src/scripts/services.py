@@ -101,14 +101,6 @@ def velocity_controller(ref_q_dot,q_dot,error_start,start_times,s_time):
     return error
 
 
-
-
-        
-
-
-
-
-
 if __name__ == "__main__":
     #get joint position:
     q = Get_joint_position()
@@ -151,12 +143,20 @@ if __name__ == "__main__":
         Joint_velocities = Joint_velocity_calculation_client(q1,q2,q3,vel[0],vel[1],vel[2],vel[3],vel[4],vel[5])
         ref_q_dot = np.array(Joint_velocities.q_dot).reshape((3,1))
         q = q_position - q_start_position
+        #actual velocity
         q_dot = np.array((q_position - q_previous))/(time-start_time)
         #PD controller
         e = velocity_controller(ref_q_dot,q_dot,error_start,start_time,s_time)
         start_time = time
         error_start = e
         q_previous = q_position 
+        #output velocity ([vx,vy,vz,wx,wy,wz])
+        v_actual = task_space_velcal_client(q1[0],q2[0],q3[0],q_dot[0],q_dot[1],q_dot[2])
+        v_ref = task_space_velcal_client(q1[0],q2[0],q3[0],ref_q_dot[0],ref_q_dot[1],ref_q_dot[2])
+        print("The actual velocity is ",v_actual.veloutput)
+        print("The reference velocity is ",v_ref.veloutput)
+        print("The time is ",time)
+
         
 
 
@@ -173,3 +173,18 @@ if __name__ == "__main__":
     #calculate joint velovity
     #user input velocity of end effector
     
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
