@@ -131,9 +131,11 @@ if __name__ == "__main__":
     #define the error from the beginning
     error_start = rev_qdot - q_dot
     #setting up controller
-    time_bar = []
     q_previous = Get_joint_position()
     q_previous = np.array(q_previous).reshape((3,1))
+    actual_velocity = []
+    reference_velocity = []
+    Time_file = []
     while error_start[0] > 0.000001 or error_start[1] > 0.0000001 or error_start[2] > 0.000001:
         q_position = Get_joint_position()
         q_position = np.array(q_position).reshape((3,1))
@@ -148,7 +150,7 @@ if __name__ == "__main__":
         q_dot = np.array((q_position - q_previous))/(time-start_time)
         #PD controller
         e = velocity_controller(ref_q_dot,q_dot,error_start,start_time,s_time)
-        start_time = time - start_time1
+        #start_time = time - start_time1
         error_start = e
         q_previous = q_position 
         #output velocity ([vx,vy,vz,wx,wy,wz])
@@ -159,19 +161,17 @@ if __name__ == "__main__":
         #reference velocity list
         reference_velocity.append(v_ref)
         #time list
-        Time.append(time)
+        Time_file.append(time)
 
-        
-        
-with open('Actual_velocity', 'w') as f:
-    for x in actual_velocity:
-        f.write("%s\n" % x)
-with open('Reference_velocity', 'w') as f:
-    for x in reference_velocity:
-        f.write("%s\n" % x)
-with open('Time', 'w') as f:
-    for x in Time:
-        f.write("%s\n" % x)
+    with open('Actual_velocity', 'w') as f:
+     for x in actual_velocity:
+            f.write("%s\n" % x)
+    with open('Reference_velocity', 'w') as f:
+        for x in reference_velocity:
+            f.write("%s\n" % x)
+    with open('Time', 'w') as f:
+        for x in Time_file:
+            f.write("%s\n" % x)
 
 
 
