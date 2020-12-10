@@ -158,7 +158,7 @@ if __name__ == "__main__":
         #reference velocity list
         reference_velocity.append(v_ref)
         #time list
-        T.append(time)
+        Time_file.append(time)
 
         
         
