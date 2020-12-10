@@ -131,7 +131,6 @@ if __name__ == "__main__":
     #define the error from the beginning
     error_start = rev_qdot - q_dot
     #setting up controller
-    time_bar = []
     q_previous = Get_joint_position()
     q_previous = np.array(q_previous).reshape((3,1))
     while error_start[0] > 0.000001 or error_start[1] > 0.0000001 or error_start[2] > 0.000001:
@@ -159,7 +158,7 @@ if __name__ == "__main__":
         #reference velocity list
         reference_velocity.append(v_ref)
         #time list
-        Time_file.append(time)
+        T.append(time)
 
         
         
